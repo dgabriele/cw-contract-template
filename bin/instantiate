@@ -1,0 +1,57 @@
+#!/bin/bash
+
+NETWORK=$1
+MINTER=$2
+SOME_VALUE=$3
+RELEASE_DIR="./release"
+FILE_TX_HASH="tx_hash.txt"
+FILE_CONTRACT_ADDR="contract_addr.txt"
+FILE_CODE_ID="code_id.txt"
+CODE_ID=$(cat $RELEASE_DIR/$FILE_CODE_ID)
+INSTANTIATE_MSG='{"value":"'$SOME_VALUE'"}'
+
+case $NETWORK in
+  devnet)
+    NODE="http://localhost:26657"
+    DENOM=ujunox
+    CHAIN_ID=testing
+    ;;
+  testnet)
+    NODE="https://rpc.uni.juno.deuslabs.fi:443"
+    DENOM=ujunox
+    CHAIN_ID=uni-3
+    ;;
+  mainnet)
+    NODE="https://rpc-juno.itastakers.com",
+    DENOM=ujuno
+    CHAIN_ID=juno-1
+    ;;
+esac
+
+TXFLAG="--node $NODE --chain-id $CHAIN_ID --gas-prices 0.03$DENOM --gas auto --gas-adjustment 1.5 --no-admin"
+
+instantiate() { 
+    CMD="junod tx wasm instantiate $CODE_ID $INSTANTIATE_MSG --label "GLTO" --from $MINTER --output json -y $TXFLAG"
+    echo "$CMD"
+
+    RESULT=$($CMD)
+    echo "$RESULT" | jq
+
+    TXHASH=$(echo "$RESULT" | jq -r '.txhash')
+    
+    echo $TXHASH >$RELEASE_DIR/$FILE_TX_HASH
+    echo "waiting for transaction to finalize..."
+
+    CONTRACT_ADDR=""
+    while [[ $CONTRACT_ADDR == "" ]]
+    do
+        sleep 3
+        CONTRACT_ADDR=$(junod query tx $TXHASH --node $NODE --chain-id $CHAIN_ID --output json 2>/dev/null \
+            | jq -r '.logs[0].events[0].attributes[0].value')
+    done
+
+    echo "contract address: $CONTRACT_ADDR"
+    echo $CONTRACT_ADDR >$RELEASE_DIR/$FILE_CONTRACT_ADDR
+}
+
+instantiate

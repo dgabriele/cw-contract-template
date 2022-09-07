@@ -1,0 +1,103 @@
+#!/usr/bin/bash
+#
+# copy compiled wasm target to docker container running juno local dev validator
+# and deploy it.
+
+# path to .wasm artifact to deploy:
+WASM_FILEPATH=$1
+
+# deploy wasm artifact to appropriate network:
+NETWORK=$2
+
+# name of admin wallet
+WALLET=$3
+
+# where relase metadata files are written to, like
+# a file containing the code ID.
+RELEASE_DIR="./release"
+
+WASM_FILENAME=$(basename $WASM_FILEPATH)
+
+CODE_ID_FILENAME="code_id.txt"
+
+# parent directory path of this script:
+SCRIPT_DIR=$(dirname -- "$0")
+
+# Function for deploying to testnet or mainnet
+function deploy() {
+  URL="$1"
+  DENOM="$2"
+  CHAIN_ID="$3"
+  NODE="--node $URL"
+  NODECHAIN=" $NODE --chain-id $CHAIN_ID"
+  TXFLAG=" $NODECHAIN --gas auto --gas-adjustment 1.3 --fees 1200000ujunox"
+  CMD="junod tx wasm store $WASM_FILEPATH --from $WALLET $TXFLAG --output json -y "
+  
+  echo $CMD
+  JSON_RESULT=$($CMD)
+  
+  echo $JSON_RESULT | jq
+  UPLOADTX=$(echo $JSON_RESULT | jq -r '.txhash')
+
+  # pretty print JSON
+  echo "$UPLOADTX"
+
+	CODE_ID=""
+  CODE_ID_JSON_PATH=".logs[0].events[-1].attributes[0].value"
+  while [[ $CODE_ID == "" ]]
+  do 
+      sleep 3  # wait for wasm store command to complete
+      echo "junod query tx $UPLOADTX $NODECHAIN --output json | jq -r $CODE_ID_JSON_PATH"
+      CODE_ID=$(junod query tx $UPLOADTX $NODECHAIN --output json | jq -r $CODE_ID_JSON_PATH)
+  done
+
+  echo "contract code ID: $CODE_ID"
+
+  # save to CODE_ID_FILENAME in release directory
+  mkdir -p $RELEASE_DIR
+  echo $CODE_ID > "$RELEASE_DIR/$CODE_ID_FILENAME"
+  cp $WASM_FILEPATH "$RELEASE_DIR/$"
+}
+
+VALIDATOR_DOCKER_CONTAINER_NAME="juno_node_1"
+
+# Function for deploying to validator running on localhost via docker
+function deploy_local() {
+  # copy wasm artifact to container
+  docker cp $WASM_FILEPATH "$VALIDATOR_DOCKER_CONTAINER_NAME:/$WASM_FILENAME"
+
+  # perform `junod tx wasm store' on local validator
+  RESP="$(
+    junod tx wasm store "$WASM_FILEPATH" \
+    --gas-prices 0.1ujunox \
+    --gas auto \
+    --gas-adjustment 1.3 \
+    --chain-id testing \
+    --from $WALLET \
+    --output json \
+    -b block \
+    -y)"
+
+  mkdir -p $RELEASE_DIR
+
+  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[0].value')
+  echo "$CODE_ID" >"$RELEASE_DIR/$CODE_ID_FILENAME"
+
+  cp $WASM_FILEPATH "$RELEASE_DIR/$WASM_FILENAME"
+
+  echo $RESP
+}
+
+# program point of entry
+case $NETWORK in
+    mainnet)
+        deploy "https://rpc-juno.itastakers.com:443" "ujuno" "juno-1"
+        ;;
+    testnet)
+        deploy "https://rpc.uni.juno.deuslabs.fi:443" "ujunox" "uni-3"
+        ;;
+    devnet|*)
+        # deploy to local validator running in docker
+        deploy_local | $SCRIPT_DIR/utils/base64-decode-attributes | jq
+        ;;
+esac

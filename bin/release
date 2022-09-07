@@ -1,0 +1,29 @@
+#!/usr/bin/bash
+# GLTO CW20 token contract deployment CLI tool
+#
+# Steps:
+# 1. Deploy and instantiate the contract with deploy-and-instantiate.
+# 2. Deploy and instantiate the Airdrop contract.
+# 3. Mint GLTO to the Airdrop contract address.
+
+# exit on any error
+set -e
+
+CMD=$1
+NETWORK=$2
+SENDER=$3
+
+shift 3
+
+case $CMD in
+    deploy-and-instantiate-contract)
+        SUPPLY_CAP=420690000 
+        make network=$NETWORK build deploy
+        make network=$NETWORK minter=$SENDER symbol_name=Gelotto symbol=GLTO cap=$SUPPLY_CAP instantiate
+        ;;
+    mint-tokens-for-airdrop-contract)
+        CW20_AIRDROP_COTNRACT_ADDRESS=$1
+        AIRDROP_FUNDING_AMOUNT=210
+        make network=$NETWORK amount=$AIRDROP_FUNDING_AMOUNT sender=$SENDER recipient=$CW20_AIRDROP_COTNRACT_ADDRESS mint
+        ;;
+esac
