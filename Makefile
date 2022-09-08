@@ -8,11 +8,11 @@ sender ?= juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
 build:
 	./bin/build
 
-# deploy to local dev validator, assuming it's running
+# deploy WASM file (generated from `make build`)
 deploy:
 	./bin/deploy ./artifacts/$(wasm_filename) $(network) $(sender)
 
-# instantiate last contract to be deployed
+# instantiate last contract to be deployed using code ID in release dir code-id file
 instantiate:
 	./bin/instantiate $(network) $(sender) $(value)
 
