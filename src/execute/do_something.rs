@@ -17,7 +17,7 @@ pub fn do_something(
     Ok(something)
   })?;
 
-  // build response JSON response attributes 
+  // build JSON response attributes 
   let mut attrs = vec![
       attr("action", "do_something"),
   ];
