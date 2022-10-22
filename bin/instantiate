@@ -22,7 +22,7 @@ case $NETWORK in
     CHAIN_ID=uni-3
     ;;
   mainnet)
-    NODE="https://rpc-juno.itastakers.com",
+    NODE="https://rpc-juno.itastakers.com"
     DENOM=ujuno
     CHAIN_ID=juno-1
     ;;
