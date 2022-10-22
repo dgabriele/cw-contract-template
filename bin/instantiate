@@ -1,8 +1,9 @@
 #!/bin/bash
 
 NETWORK=$1
-MINTER=$2
+SENDER=$2
 SOME_VALUE=$3
+LABEL="contract-template-$(date +%s)"
 RELEASE_DIR="./release"
 FILE_TX_HASH="tx_hash.txt"
 FILE_CONTRACT_ADDR="contract_addr.txt"
@@ -28,10 +29,10 @@ case $NETWORK in
     ;;
 esac
 
-TXFLAG="--node $NODE --chain-id $CHAIN_ID --gas-prices 0.03$DENOM --gas auto --gas-adjustment 1.5 --no-admin"
+TXFLAG="--node $NODE --chain-id $CHAIN_ID --gas-prices 0.03$DENOM --gas auto --gas-adjustment 1.5 --admin $SENDER"
 
 instantiate() { 
-    CMD="junod tx wasm instantiate $CODE_ID $INSTANTIATE_MSG --label "GLTO" --from $MINTER --output json -y $TXFLAG"
+    CMD="junod tx wasm instantiate $CODE_ID $INSTANTIATE_MSG --label "$LABEL" --from $SENDER --output json -y $TXFLAG"
     echo "$CMD"
 
     RESULT=$($CMD)
