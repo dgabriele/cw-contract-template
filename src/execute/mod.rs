@@ -1,3 +1,3 @@
-mod do_something;
+mod transfer_ownership;
 
-pub use do_something::do_something;
+pub use transfer_ownership::transfer_ownership;

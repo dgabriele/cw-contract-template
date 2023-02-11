@@ -20,10 +20,7 @@ pub fn instantiate(
 ) -> Result<Response, ContractError> {
   set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
   state::initialize(deps, &env, &info, &msg)?;
-  Ok(
-    Response::new()
-      .add_attribute("action", "instantiate")
-  )
+  Ok(Response::new().add_attribute("action", "instantiate"))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -34,7 +31,9 @@ pub fn execute(
   msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
   match msg {
-    ExecuteMsg::DoSomething { value } => execute::do_something(deps, env, info, &value),
+    ExecuteMsg::TransferOwnership { new_owner } => {
+      execute::transfer_ownership(deps, env, info, &new_owner)
+    },
   }
 }
 
@@ -45,7 +44,7 @@ pub fn query(
   msg: QueryMsg,
 ) -> StdResult<Binary> {
   let result = match msg {
-    QueryMsg::GetSomething {} => to_binary(&query::get_something(deps)?),
+    QueryMsg::Select { fields } => to_binary(&query::select(deps, fields)?),
   }?;
   Ok(result)
 }

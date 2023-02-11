@@ -1,8 +1,7 @@
-network ?= devnet  # network := devnet|mainnet|testnet
-contract_addr_filepath ?= $(release_dirpath)/contract_addr.txt
-wasm_filename ?= cw_contract.wasm
-release_dirpath ?= ./release
-sender ?= juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
+network 				?= devnet  # network := devnet|mainnet|testnet
+sender 					?= juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
+build_dir 				?= ./builds
+wasm_filename 			?= cw_contract.wasm
 
 # build optimized WASM artifact
 build:
@@ -10,11 +9,11 @@ build:
 
 # deploy WASM file (generated from `make build`)
 deploy:
-	./bin/deploy ./artifacts/$(wasm_filename) $(network) $(sender)
+	./bin/deploy ./artifacts/$(wasm_filename) $(network) $(sender) $(tag)
 
 # instantiate last contract to be deployed using code ID in release dir code-id file
 instantiate:
-	./bin/instantiate $(network) $(sender) $(value)
+	./bin/instantiate $(network) $(sender) $(tag)
 
 # run all unit tests
 test:
@@ -25,11 +24,11 @@ schemas:
 	cargo schema
 
 # Run/start local "devnet" validator docker image	
-validator:
-	./bin/validator
+devnet:
+	./bin/devnet
 
-do-something:
-	./client.sh do-something $(network) $(contract_addr_filepath) $(sender) $(value)
+transfer-ownership:
+	./client.sh transfer-ownership $(network) $(tag) $(sender)
 
-get-something:
-	./client.sh get-something $(network) $(contract_addr_filepath) $(sender)
+select:
+	./client.sh query-select $(network) $(tag)

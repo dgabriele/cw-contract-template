@@ -9,19 +9,29 @@ WASM_FILEPATH=$1
 # deploy wasm artifact to appropriate network:
 NETWORK=$2
 
-# name of admin wallet
-WALLET=$3
+# signer and contract admin address
+SENDER=$3
+
+if [ -z "$4" ]; then
+  BUILD_NAME="build-$(date +%s)"
+else
+  BUILD_NAME=$4
+fi
 
 # where relase metadata files are written to, like
 # a file containing the code ID.
-RELEASE_DIR="./release"
+BASE_BUILD_DIR="./builds"
+
+BUILD_DIR="$BASE_BUILD_DIR/build-$BUILD_NAME"
 
 WASM_FILENAME=$(basename $WASM_FILEPATH)
 
-CODE_ID_FILENAME="code_id.txt"
+CODE_ID_FILENAME="code-id"
 
 # parent directory path of this script:
 SCRIPT_DIR=$(dirname -- "$0")
+
+VALIDATOR_DOCKER_CONTAINER_NAME="juno_node_1"
 
 # Function for deploying to testnet or mainnet
 function deploy() {
@@ -31,7 +41,7 @@ function deploy() {
   NODE="--node $URL"
   NODECHAIN=" $NODE --chain-id $CHAIN_ID"
   TXFLAG=" $NODECHAIN --gas auto --gas-adjustment 1.3"
-  CMD="junod tx wasm store $WASM_FILEPATH --from $WALLET $TXFLAG --output json -y "
+  CMD="junod tx wasm store $WASM_FILEPATH --from $SENDER $TXFLAG --output json -y "
   
   echo $CMD
   JSON_RESULT=$($CMD)
@@ -44,25 +54,33 @@ function deploy() {
 
 	CODE_ID=""
   CODE_ID_JSON_PATH=".logs[0].events[-1].attributes[0].value"
+
   while [[ $CODE_ID == "" ]]
   do 
       sleep 3  # wait for wasm store command to complete
+
       echo "junod query tx $UPLOADTX $NODECHAIN --output json | jq -r $CODE_ID_JSON_PATH"
-      CODE_ID=$(junod query tx $UPLOADTX $NODECHAIN --output json | jq -r $CODE_ID_JSON_PATH)
+
+      exec_result=$(junod query tx $UPLOADTX $NODECHAIN --output json)
+
+      echo "$exec_result" | jq
+
+      CODE_ID=$(echo "$exec_result" | jq -r $CODE_ID_JSON_PATH)
   done
 
   echo "contract code ID: $CODE_ID"
 
   # save to CODE_ID_FILENAME in release directory
-  mkdir -p $RELEASE_DIR
-  echo $CODE_ID > "$RELEASE_DIR/$CODE_ID_FILENAME"
-  cp $WASM_FILEPATH "$RELEASE_DIR/$"
+  mkdir -p $BUILD_DIR
+  echo $CODE_ID > "$BUILD_DIR/$CODE_ID_FILENAME"
+  cp $WASM_FILEPATH $BUILD_DIR/
 }
 
-VALIDATOR_DOCKER_CONTAINER_NAME="juno_node_1"
 
 # Function for deploying to validator running on localhost via docker
 function deploy_local() {
+  set -e  # exit immediately upon first error
+
   # copy wasm artifact to container
   docker cp $WASM_FILEPATH "$VALIDATOR_DOCKER_CONTAINER_NAME:/$WASM_FILENAME"
 
@@ -73,22 +91,25 @@ function deploy_local() {
     --gas auto \
     --gas-adjustment 1.3 \
     --chain-id testing \
-    --from $WALLET \
+    --from $SENDER \
     --output json \
     -b block \
     -y)"
 
-  mkdir -p $RELEASE_DIR
+  mkdir -p $BUILD_DIR
 
-  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[-1].value')
-  echo "$CODE_ID" >"$RELEASE_DIR/$CODE_ID_FILENAME"
+  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[0].value')
+  echo "$CODE_ID" >"$BUILD_DIR/$CODE_ID_FILENAME"
 
-  cp $WASM_FILEPATH "$RELEASE_DIR/$WASM_FILENAME"
+  cp $WASM_FILEPATH "$BUILD_DIR/"
 
   echo $RESP
 }
 
 # program point of entry
+echo "$BUILD_NAME" > "$BASE_BUILD_DIR/latest"
+mkdir -p $BUILD_DIR
+
 case $NETWORK in
     mainnet)
         deploy "https://rpc-juno.itastakers.com:443" "ujuno" "juno-1"

@@ -1,27 +1,24 @@
 use crate::error::ContractError;
-use crate::msg::{InstantiateMsg};
-use cosmwasm_std::{DepsMut, Env, MessageInfo};
-use cw_storage_plus::{Item};
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use crate::msg::InstantiateMsg;
+use cosmwasm_std::{Addr, DepsMut, Env, MessageInfo, StdResult, Storage};
+use cw_storage_plus::Item;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct Something {
-  pub value: Option<String>,
-}
-
-pub const SOMETHING: Item<Something> = Item::new("something");
+pub const OWNER: Item<Addr> = Item::new("owner");
 
 /// Initialize contract state data.
 pub fn initialize(
   deps: DepsMut,
   _env: &Env,
-  _info: &MessageInfo,
-  msg: &InstantiateMsg,
-) -> Result<Something, ContractError> {
-  let something = Something {
-    value: msg.value.clone()
-  };
-  SOMETHING.save(deps.storage, &something)?;
-  Ok(something)
+  info: &MessageInfo,
+  _msg: &InstantiateMsg,
+) -> Result<(), ContractError> {
+  OWNER.save(deps.storage, &info.sender)?;
+  Ok(())
+}
+
+pub fn is_owner(
+  storage: &dyn Storage,
+  addr: &Addr,
+) -> StdResult<bool> {
+  return Ok(OWNER.load(storage)? == *addr);
 }

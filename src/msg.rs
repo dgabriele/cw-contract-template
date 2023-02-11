@@ -1,30 +1,20 @@
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
-use crate::state::Something;
+use cosmwasm_schema::cw_serde;
+use cosmwasm_std::Addr;
 
-/// Initial contract state.
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct InstantiateMsg {
-  pub value: Option<String>,
-}
+#[cw_serde]
+pub struct InstantiateMsg {}
 
-/// Executable contract endpoints.
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum ExecuteMsg {
-  DoSomething {
-    value: Option<String>,
-  },
+  TransferOwnership { new_owner: Addr },
 }
 
-/// Custom contract query endpoints.
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum QueryMsg {
-  GetSomething {},
+  Select { fields: Option<Vec<String>> },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
-pub struct GetSomethingResponse {
-  pub something: Something,
+#[cw_serde]
+pub struct SelectResponse {
+  pub owner: Option<Addr>,
 }

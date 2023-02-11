@@ -2,10 +2,16 @@
 
 CMD=$1
 NETWORK=$2
-CONTRACT_ADDR=$(cat $3)
 NODE=
 CHAIN_ID=
 FLAGS=
+
+TAG=$3
+if [ -z "$TAG" ]; then
+  TAG=$(cat ./builds/latest)
+fi
+
+CONTRACT_ADDR=$(cat ./builds/build-$TAG/latest-contract)
 
 shift 3
 
@@ -28,10 +34,9 @@ case $NETWORK in
 esac
 
 
-do_something() {
+transfer-ownership() {
   sender=$1
-  value=$2
-  msg='{"do_something":{"value":"'$value'"}}'
+  msg='{"transfer_ownership":{}}'
   flags="\
   --node $NODE \
   --gas-prices 0.025$DENOM \
@@ -49,8 +54,8 @@ do_something() {
 }
 
 
-get_something() {
-  query='{"get_something":{}}'
+query-select() {
+  query='{"select":{"fields":null}}'
   flags="--chain-id $CHAIN_ID --output json --node $NODE"
   echo junod query wasm contract-state smart $CONTRACT_ADDR "$query" $flags
   response=$(junod query wasm contract-state smart $CONTRACT_ADDR "$query" $flags)
@@ -58,13 +63,16 @@ get_something() {
 }
 
 set -e
+echo "executing $CMD for $CONTRACT_ADDR"
 
-echo $*
 case $CMD in
-  do-something)
-    do_something $1 $2
+  transfer-ownership)
+    transfer-ownership $1
     ;;
-  get-something) 
-    get_something
+  query-select) 
+    query-select
     ;;
+  *)
+    echo "unrecognized option: $CMD" >&2
+    exit -1
 esac
