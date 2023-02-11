@@ -1,6 +1,6 @@
 network ?= devnet  # network := devnet|mainnet|testnet
 contract_addr_filepath ?= $(release_dirpath)/contract_addr.txt
-wasm_filename ?= cw_contract_template.wasm
+wasm_filename ?= cw_contract.wasm
 release_dirpath ?= ./release
 sender ?= juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
 
