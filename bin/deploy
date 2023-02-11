@@ -30,7 +30,7 @@ function deploy() {
   CHAIN_ID="$3"
   NODE="--node $URL"
   NODECHAIN=" $NODE --chain-id $CHAIN_ID"
-  TXFLAG=" $NODECHAIN --gas auto --gas-adjustment 1.3 --fees 1200000ujunox"
+  TXFLAG=" $NODECHAIN --gas auto --gas-adjustment 1.3"
   CMD="junod tx wasm store $WASM_FILEPATH --from $WALLET $TXFLAG --output json -y "
   
   echo $CMD
@@ -80,7 +80,7 @@ function deploy_local() {
 
   mkdir -p $RELEASE_DIR
 
-  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[0].value')
+  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[-1].value')
   echo "$CODE_ID" >"$RELEASE_DIR/$CODE_ID_FILENAME"
 
   cp $WASM_FILEPATH "$RELEASE_DIR/$WASM_FILENAME"
