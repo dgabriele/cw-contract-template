@@ -13,7 +13,7 @@ NETWORK=$2
 SENDER=$3
 
 if [ -z "$4" ]; then
-  BUILD_NAME="build-$(date +%s)"
+  BUILD_NAME="$(date +%s)"
 else
   BUILD_NAME=$4
 fi
