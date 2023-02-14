@@ -1,4 +1,4 @@
-#CosmWasm Project
+# CosmWasm Project
 
 ## Project Structure
 
