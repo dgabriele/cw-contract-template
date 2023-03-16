@@ -107,8 +107,8 @@ function deploy_local() {
 }
 
 # program point of entry
-echo "$BUILD_NAME" > "$BASE_BUILD_DIR/latest"
 mkdir -p $BUILD_DIR
+echo "$BUILD_NAME" > "$BASE_BUILD_DIR/latest"
 
 case $NETWORK in
     mainnet)
