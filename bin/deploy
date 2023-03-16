@@ -53,7 +53,7 @@ function deploy() {
   echo "$UPLOADTX"
 
 	CODE_ID=""
-  CODE_ID_JSON_PATH=".logs[0].events[-1].attributes[0].value"
+  CODE_ID_JSON_PATH=".logs[0].events[-1].attributes[-1].value"
 
   while [[ $CODE_ID == "" ]]
   do 
