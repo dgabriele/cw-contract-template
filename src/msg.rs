@@ -15,6 +15,9 @@ pub enum QueryMsg {
 }
 
 #[cw_serde]
+pub struct MigrateMsg {}
+
+#[cw_serde]
 pub struct SelectResponse {
   pub owner: Option<Addr>,
 }
