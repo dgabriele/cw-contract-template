@@ -31,6 +31,7 @@ if [ -z "$(docker ps -a | grep $container_name)" ]; then
       -p $peer_port:$peer_port \
       -e STAKE_TOKEN=ujunox \
       -e UNSAFE_CORS=true \
+      -e TIMEOUT_COMMIT=500ms \
       ghcr.io/cosmoscontracts/juno:main \
       ./setup_and_run.sh juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
 
