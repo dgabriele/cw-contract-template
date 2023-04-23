@@ -98,7 +98,7 @@ function deploy_local() {
 
   mkdir -p $BUILD_DIR
 
-  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[0].value')
+  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[-1].value')
   echo "$CODE_ID" >"$BUILD_DIR/$CODE_ID_FILENAME"
 
   cp $WASM_FILEPATH "$BUILD_DIR/"
