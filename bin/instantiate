@@ -2,9 +2,10 @@
 
 NETWORK=$1
 SENDER=$2
+BUILD_TAG=$3
 
 LABEL="contract-$(date +%s)"
-BUILD_DIR="./builds/build-$(cat ./builds/latest)"
+BUILD_DIR="./builds/build-$BUILD_TAG"
 FILE_TX_HASH="tx"
 FILE_CODE_ID="code-id"
 
