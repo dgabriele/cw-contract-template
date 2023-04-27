@@ -2,7 +2,7 @@
 name = "cw-contract"
 version = "0.0.1"
 authors = []
-edition = "2018"
+edition = "2021"
 description = "Smart Contract"
 license = "Apache-2.0"
 repository = ""
