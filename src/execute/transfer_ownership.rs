@@ -14,5 +14,5 @@ pub fn transfer_ownership(
     return Err(ContractError::NotAuthorized {});
   }
   OWNER.save(deps.storage, new_owner)?;
-  Ok(Response::new().add_attributes(vec![attr("new_owner", new_owner.to_string())]))
+  Ok(Response::new().add_attributes(vec![attr("action", new_owner.to_string())]))
 }
