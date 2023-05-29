@@ -6,3 +6,5 @@
 *.sw[opn]
 .idea
 .vscode
+schema/
+builds/

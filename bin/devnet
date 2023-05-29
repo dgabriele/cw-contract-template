@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 # starts a validator running in a docker container
 # 
 # Juno ships with an unsafe seed user in dev mode when you run the prebuilt
@@ -32,7 +32,7 @@ if [ -z "$(docker ps -a | grep $container_name)" ]; then
       -e STAKE_TOKEN=ujunox \
       -e UNSAFE_CORS=true \
       -e TIMEOUT_COMMIT=500ms \
-      ghcr.io/cosmoscontracts/juno:main \
+      ghcr.io/cosmoscontracts/juno:$(junod version) \
       ./setup_and_run.sh juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
 
     echo "To create an unsafe seed user by running: junod keys add <unsafe-test-key-name> --recover"
