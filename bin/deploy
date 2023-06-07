@@ -40,7 +40,7 @@ function deploy() {
   CHAIN_ID="$3"
   NODE="--node $URL"
   NODECHAIN=" $NODE --chain-id $CHAIN_ID"
-  TXFLAG=" $NODECHAIN --gas auto --gas-adjustment 1.3 --fees 10000ujuno"
+  TXFLAG=" $NODECHAIN --gas auto --gas-adjustment 1.3 --fees 270000ujuno"
   CMD="junod tx wasm store $WASM_FILEPATH --from $SENDER $TXFLAG --output json -y "
   
   echo $CMD
@@ -112,7 +112,7 @@ echo "$BUILD_NAME" > "$BASE_BUILD_DIR/latest"
 
 case $NETWORK in
     mainnet)
-        deploy "https://rpc-juno.itastakers.com:443" "ujuno" "juno-1"
+        deploy "https://juno-rpc.reece.sh:443" "ujuno" "juno-1"
         ;;
     testnet)
         deploy "https://rpc.uni.juno.deuslabs.fi:443" "ujunox" "uni-3"
