@@ -27,7 +27,7 @@ case $NETWORK in
     CHAIN_ID=uni-3
     ;;
   mainnet)
-    NODE="https://rpc-juno.itastakers.com:443"
+    NODE="https://juno-rpc.reece.sh:443"
     DENOM=ujuno
     CHAIN_ID=juno-1
     ;;
