@@ -41,9 +41,9 @@ pub fn query(
   deps: Deps,
   _env: Env,
   msg: QueryMsg,
-) -> StdResult<Binary> {
+) -> Result<Binary, ContractError> {
   let result = match msg {
-    QueryMsg::Select { fields } => to_binary(&query::select(deps, fields)?),
+    QueryMsg::Select { fields, wallet } => to_binary(&query::select(deps, fields, wallet)?),
   }?;
   Ok(result)
 }
