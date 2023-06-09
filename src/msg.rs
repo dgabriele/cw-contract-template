@@ -11,7 +11,10 @@ pub enum ExecuteMsg {
 
 #[cw_serde]
 pub enum QueryMsg {
-  Select { fields: Option<Vec<String>> },
+  Select { 
+    fields: Option<Vec<String>>,
+    wallet: Option<Addr>,
+  },
 }
 
 #[cw_serde]
