@@ -5,7 +5,7 @@ use cosmwasm_std::{Addr, Deps};
 pub fn select(
   deps: Deps,
   fields: Option<Vec<String>>,
-  account: Option<Addr>
+  _account: Option<Addr>
 ) -> Result<SelectResponse, ContractError> {
   if let Some(fields) = fields {
     Ok(SelectResponse {
