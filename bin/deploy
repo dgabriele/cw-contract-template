@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 #
 # copy compiled wasm target to docker container running juno local dev validator
 # and deploy it.
@@ -85,20 +85,26 @@ function deploy_local() {
   docker cp $WASM_FILEPATH "$VALIDATOR_DOCKER_CONTAINER_NAME:/$WASM_FILENAME"
 
   # perform `junod tx wasm store' on local validator
-  RESP="$(
-    junod tx wasm store "$WASM_FILEPATH" \
+  RESP=$(junod tx wasm store "$WASM_FILEPATH" \
     --gas-prices 0.1ujunox \
     --gas auto \
     --gas-adjustment 1.3 \
     --chain-id testing \
     --from $SENDER \
     --output json \
-    -b block \
-    -y)"
+    -b sync \
+    -y)
+  TXHASH=$(echo "$RESP" | jq -r '.txhash')
 
   mkdir -p $BUILD_DIR
 
-  CODE_ID=$(echo "$RESP" | jq -r '.logs[0].events[-1].attributes[-1].value')
+  CODE_ID=""
+  while [[ $CODE_ID == "" && $CODE_ID != "null" ]]
+  do
+      sleep 3
+      CODE_ID=$(junod query tx $TXHASH --chain-id testing --output json 2>/dev/null \
+          | jq -r '.logs[0].events[-1].attributes[-1].value')
+  done
   echo "$CODE_ID" >"$BUILD_DIR/$CODE_ID_FILENAME"
 
   cp $WASM_FILEPATH "$BUILD_DIR/"

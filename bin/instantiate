@@ -2,7 +2,8 @@
 
 NETWORK=$1
 SENDER=$2
-BUILD_TAG=$3
+DEFAULT_TAG=$(cat builds/latest)
+BUILD_TAG=${3:-$DEFAULT_TAG}
 
 LABEL="contract-$(date +%s)"
 BUILD_DIR="./builds/build-$BUILD_TAG"
@@ -43,7 +44,6 @@ instantiate() {
     echo "$RESULT" | jq
 
     TXHASH=$(echo "$RESULT" | jq -r '.txhash')
-    
     echo $TXHASH >$BUILD_DIR/$FILE_TX_HASH
     echo "waiting for transaction to finalize..."
 

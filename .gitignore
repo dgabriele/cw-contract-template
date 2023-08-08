@@ -6,3 +6,6 @@
 *.sw[opn]
 .idea
 .vscode
+schema/
+builds/
+Cargo.lock
