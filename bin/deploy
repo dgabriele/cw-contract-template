@@ -118,7 +118,7 @@ echo "$BUILD_NAME" > "$BASE_BUILD_DIR/latest"
 
 case $NETWORK in
     mainnet)
-        deploy "https://juno-rpc.reece.sh:443" "ujuno" "juno-1"
+        deploy "https://juno.kingnodes.com:443" "ujuno" "juno-1"
         ;;
     testnet)
         deploy "https://rpc.uni.juno.deuslabs.fi:443" "ujunox" "uni-3"
