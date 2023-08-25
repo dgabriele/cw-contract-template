@@ -6,9 +6,15 @@ pub enum ContractError {
   #[error("{0}")]
   Std(#[from] StdError),
 
-  #[error("NotAuthorized")]
-  NotAuthorized {},
+  #[error("NotAuthorized: {reason:?}")]
+  NotAuthorized { reason: String },
 
-  #[error("ValidationError")]
-  ValidationError {},
+  #[error("ValidationError: {reason:?}")]
+  ValidationError { reason: String },
+}
+
+impl From<ContractError> for StdError {
+  fn from(err: ContractError) -> Self {
+    StdError::generic_err(err.to_string())
+  }
 }
