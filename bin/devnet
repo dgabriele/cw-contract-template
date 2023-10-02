@@ -21,10 +21,8 @@ peer_port=26656
 rpc_port=26657
 juno_version=$(junod version | cut -d'-' -f1 )
 
-# build or start the validator container
+# run or start the local validator and tail logs
 if [ -z "$(docker ps -a | grep $container_name)" ]; then
-    echo "running validator image with container name $container_name..."
-
     docker run -it \
       --name $container_name \
       -p $rpc_port:$rpc_port \
@@ -35,13 +33,7 @@ if [ -z "$(docker ps -a | grep $container_name)" ]; then
       -e TIMEOUT_COMMIT=500ms \
       ghcr.io/cosmoscontracts/juno:$juno_version \
       ./setup_and_run.sh juno16g2rahf5846rxzp3fwlswy08fz8ccuwk03k57y
-
-    echo "To create an unsafe seed user by running: junod keys add <unsafe-test-key-name> --recover"
-    echo "Then enter the mnemonic:"
-    echo "clip hire initial neck maid actor venue client foam budget lock catalog sweet steak waste crater broccoli pipe steak sister coyote moment obvious choose"
-
 else
-    echo "starting validator docker container..."
     docker start $container_name
     docker logs "$container_name" -f --tail 500 
 fi
