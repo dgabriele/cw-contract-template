@@ -17,10 +17,8 @@ pub fn instantiate(
     info: MessageInfo,
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
-    let ctx = Context { deps, env, info };
-    set_contract_version(ctx.deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    state::init(ctx, &msg)?;
-    Ok(Response::new().add_attribute("action", "instantiate"))
+    set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
+    Ok(state::init(Context { deps, env, info }, &msg)?)
 }
 
 #[entry_point]
