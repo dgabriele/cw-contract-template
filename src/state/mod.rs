@@ -5,7 +5,7 @@ use cosmwasm_std::Response;
 
 use crate::{error::ContractError, execute::Context, msg::InstantiateMsg};
 
-/// Initialize contract state data.
+/// Top-level initialization of contract state
 pub fn init(
     _ctx: Context,
     _msg: &InstantiateMsg,
