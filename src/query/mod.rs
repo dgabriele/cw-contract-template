@@ -1,3 +1,9 @@
-mod select;
+mod config;
 
-pub use select::select;
+pub use config::query_config;
+use cosmwasm_std::{Deps, Env};
+
+pub struct ReadonlyContext<'a> {
+    pub deps: Deps<'a>,
+    pub env: Env,
+}
