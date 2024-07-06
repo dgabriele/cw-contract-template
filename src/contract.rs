@@ -1,7 +1,7 @@
 use crate::error::ContractError;
-use crate::execute::{exec_set_config, Context};
+use crate::execute::{config::exec_set_config, Context};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
-use crate::query::{query_config, ReadonlyContext};
+use crate::query::{config::query_config, ReadonlyContext};
 use crate::state;
 use cosmwasm_std::{entry_point, to_json_binary};
 use cosmwasm_std::{Binary, Deps, DepsMut, Env, MessageInfo, Response};
