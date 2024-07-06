@@ -1,5 +1,5 @@
 use crate::error::ContractError;
-use crate::execute::{config::exec_set_config, Context};
+use crate::execute::{set_config::exec_set_config, Context};
 use crate::msg::{ExecuteMsg, InstantiateMsg, MigrateMsg, QueryMsg};
 use crate::query::{config::query_config, ReadonlyContext};
 use crate::state;
