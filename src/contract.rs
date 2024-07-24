@@ -18,7 +18,7 @@ pub fn instantiate(
     msg: InstantiateMsg,
 ) -> Result<Response, ContractError> {
     set_contract_version(deps.storage, CONTRACT_NAME, CONTRACT_VERSION)?;
-    Ok(state::init(Context { deps, env, info }, &msg)?)
+    Ok(state::init(Context { deps, env, info }, msg)?)
 }
 
 #[entry_point]
