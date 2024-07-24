@@ -1,5 +1,5 @@
 [package]
-name = "cw-contract"
+name = "contract"
 version = "0.0.1"
 authors = []
 edition = "2021"
