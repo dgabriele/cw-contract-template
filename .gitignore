@@ -9,3 +9,4 @@
 schema/
 builds/
 Cargo.lock
+.env

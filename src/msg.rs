@@ -6,6 +6,7 @@ use crate::state::models::Config;
 pub struct InstantiateMsg {}
 
 #[cw_serde]
+#[derive(cw_orch::ExecuteFns)]
 pub enum ExecuteMsg {
     SetConfig(Config),
 }
