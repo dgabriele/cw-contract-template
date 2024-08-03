@@ -32,8 +32,8 @@ cw-utils = { version = "1.0.3" }
 cw2 = { version = "1.1.2" }
 cw20 = { version = "1.1.2" }
 cw-storage-plus = { version = "1.2.0" }
-cosmwasm-schema = { version = "1.5.2" }
-cosmwasm-std = { version = "1.5.2" }
+cosmwasm-schema = { version = "1.5.5" }
+cosmwasm-std = { version = "1.5.5" }
 schemars = "0.8.16"
 serde = { version = "1.0.196", default-features = false, features = ["derive"] }
 thiserror = { version = "1.0.56" }
