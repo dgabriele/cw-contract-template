@@ -1,0 +1,12 @@
+{
+  "juno": {
+    "uni-6": {
+      "code_ids": {
+        "contract_name": 4585
+      },
+      "default": {
+        "contract_name": "juno16z9gwxvmaffd0mdguvs4fnjqh6239cfk4qlkxkxqgdezgwwqxa9qdl20k2"
+      }
+    }
+  }
+}
