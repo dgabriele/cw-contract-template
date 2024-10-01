@@ -10,3 +10,4 @@ schema/
 builds/
 Cargo.lock
 .env
+CACHEDIR.TAG

@@ -1,9 +1,12 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
 
-use crate::state::models::Config;
+#[allow(unused_imports)]
+use crate::{responses::ConfigResponse, state::Config};
 
 #[cw_serde]
-pub struct InstantiateMsg {}
+pub struct InstantiateMsg {
+    pub config: Config,
+}
 
 #[cw_serde]
 #[derive(cw_orch::ExecuteFns)]
@@ -20,6 +23,3 @@ pub enum QueryMsg {
 
 #[cw_serde]
 pub struct MigrateMsg {}
-
-#[cw_serde]
-pub struct ConfigResponse(pub Config);

@@ -1,9 +1,11 @@
-use crate::{error::ContractError, msg::ConfigResponse, state::storage::CONFIG};
+use crate::{
+    error::ContractError,
+    responses::ConfigResponse,
+    state::{QueryContext, CONFIG},
+};
 
-use super::ReadonlyContext;
-
-pub fn query_config(ctx: ReadonlyContext) -> Result<ConfigResponse, ContractError> {
-    let ReadonlyContext { deps, .. } = ctx;
+pub fn query_config(ctx: QueryContext) -> Result<ConfigResponse, ContractError> {
+    let QueryContext { deps, .. } = ctx;
     Ok(CONFIG
         .load(deps.storage)
         .and_then(|config| Ok(ConfigResponse(config)))?)
